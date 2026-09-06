@@ -1,0 +1,23 @@
+<?php
+
+namespace DealNews\InngestApi\Model\Sessions;
+
+/**
+ * A minimal reference to the app a function belongs to.
+ */
+class AppRef {
+
+    public function __construct(
+        public readonly ?string $id = null,
+    ) {
+    }
+
+    /**
+     * @param array<string, mixed> $data
+     */
+    public static function fromArray(array $data): self {
+        return new self(
+            id: $data['id'] ?? null,
+        );
+    }
+}
