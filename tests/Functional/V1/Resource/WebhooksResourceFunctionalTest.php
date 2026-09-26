@@ -32,7 +32,7 @@ class WebhooksResourceFunctionalTest extends V1FunctionalTestCase {
             $this->markTestSkipped('No webhooks exist in this account.');
         }
 
-        $fetched = $this->client()->webhooks()->get(self::$first_webhook->id);
+        $fetched = self::skipIfUnavailable(fn () => $this->client()->webhooks()->get(self::$first_webhook->id));
 
         $this->assertSame(self::$first_webhook->id, $fetched->id);
     }

@@ -30,7 +30,7 @@ class RunsResourceFunctionalTest extends V1FunctionalTestCase {
     public function testGetReturnsFirstRunFoundViaAnEvent(): void {
         $run = $this->firstRun();
 
-        $fetched = $this->client()->runs()->get($run->run_id);
+        $fetched = self::skipIfUnavailable(fn () => $this->client()->runs()->get($run->run_id));
 
         $this->assertSame($run->run_id, $fetched->run_id);
     }

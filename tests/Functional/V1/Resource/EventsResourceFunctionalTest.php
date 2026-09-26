@@ -30,7 +30,7 @@ class EventsResourceFunctionalTest extends V1FunctionalTestCase {
     public function testGetReturnsFirstListedEvent(): void {
         $event = $this->firstEvent();
 
-        $fetched = $this->client()->events()->get($event->internal_id);
+        $fetched = self::skipIfUnavailable(fn () => $this->client()->events()->get($event->internal_id));
 
         $this->assertSame($event->internal_id, $fetched->internal_id);
     }

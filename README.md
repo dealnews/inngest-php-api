@@ -57,7 +57,11 @@ use DealNews\InngestApi\V1Client;
 $v1 = new V1Client($signing_key);
 
 $events = $v1->events()->list(limit: 10)->items;
-$run    = $v1->runs()->get($events[0]->internal_id);
+$runs   = $v1->events()->listRuns($events[0]->internal_id)->items;
+
+if ($runs !== []) {
+    $run = $v1->runs()->get($runs[0]->run_id);
+}
 ```
 
 Point it at the Dev Server the same way (no `/api/v2`-style path segment for v1 — its paths already include their own `/v1` prefix):
