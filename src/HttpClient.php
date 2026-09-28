@@ -16,9 +16,10 @@ use GuzzleHttp\ClientInterface as GuzzleClientInterface;
 use GuzzleHttp\Exception\GuzzleException;
 
 /**
- * Thin wrapper around Guzzle for the Inngest REST API v2. Applies bearer
- * auth and the optional environment header, decodes JSON bodies, and maps
- * error responses to typed exceptions.
+ * Thin wrapper around Guzzle for the Inngest REST API, shared by the v1
+ * and v2 clients. Applies bearer auth and the optional environment
+ * header, decodes JSON bodies, and maps error responses to typed
+ * exceptions.
  */
 class HttpClient {
 
@@ -284,6 +285,12 @@ class HttpClient {
             static fn (array $error) => ErrorDetail::fromArray($error),
             $data['errors'] ?? [],
         );
+
+        // v2 errors are an `errors` array; v1 errors are a single `error`
+        // string instead, so fall back to that shape when present.
+        if ($errors === [] && is_string($data['error'] ?? null)) {
+            $errors = [ErrorDetail::fromArray(['message' => $data['error']])];
+        }
 
         $message = $errors[0]->message ?? "Inngest API request failed with status {$status}";
 

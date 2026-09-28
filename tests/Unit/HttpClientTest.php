@@ -126,4 +126,21 @@ class HttpClientTest extends TestCase {
             'server error' => [500, ServerException::class],
         ];
     }
+
+    public function testV1StyleErrorShapeIsMappedToException(): void {
+        $stack = HandlerStack::create(new MockHandler([
+            new Response(404, [], json_encode([
+                'error'  => 'Unable to load function run: 01HE8AM9DPK9N37V1RKY1DNQF5',
+                'data'   => null,
+                'status' => 404,
+            ])),
+        ]));
+
+        $http = new HttpClient('key', 'https://api.inngest.com', null, new Client(['handler' => $stack]));
+
+        $this->expectException(NotFoundException::class);
+        $this->expectExceptionMessage('Unable to load function run: 01HE8AM9DPK9N37V1RKY1DNQF5');
+
+        $http->request('GET', '/v1/runs/01HE8AM9DPK9N37V1RKY1DNQF5');
+    }
 }
